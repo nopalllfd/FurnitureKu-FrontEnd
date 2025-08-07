@@ -42,8 +42,8 @@ const AppRouter = () => {
           <Route path="products" element={<ManageProducts />} />
 
           {/* 🔧 CRUD Tambahan */}
-          <Route path="products/create" element={<AdminCreate />} />
-          <Route path="products/edit/:id" element={<AdminUpdate />} />
+          <Route path="/admin/create" element={<AdminCreate />} />
+          <Route path="/admin/edit/:id" element={<AdminUpdate />} />
           {/* Jika ingin delete pakai halaman khusus: */}
           {/* <Route path="products/delete/:id" element={<AdminDelete />} /> */}
         </Route>

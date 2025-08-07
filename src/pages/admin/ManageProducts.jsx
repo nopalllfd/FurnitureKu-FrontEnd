@@ -1,15 +1,12 @@
-import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
-// import { AdminCreate} from '../components/admin/AdminCreate';
-// import { AdminUpdate } from '../components/admin/AdminUpdate';
 import AdminList from '../../components/admin/AdminList';
 
-
-const ManageProducts = () => (
-  <div style={{ color: 'white' }}>
-    <h2>Manage Furniture Products</h2>
-    <AdminList />
-  </div>
-);
-
+function ManageProducts() {
+  return (
+    <div>
+      <h1>Kelola Produk</h1>
+      <p style={{ color: 'white' }}></p>
+      <AdminList />
+    </div>
+  );
+}
 export default ManageProducts;
