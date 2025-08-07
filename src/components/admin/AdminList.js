@@ -33,30 +33,73 @@ const AdminList = () => {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p style={{ color: 'white' }}>Loading...</p>;
 
   return (
     <div>
-      <h2>Daftar Produk</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+        <Link to="/admin/create">
+          <button style={{
+            backgroundColor: '#0f2c54',
+            color: 'white',
+            border: 'none',
+            padding: '0.5rem 1rem',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.2)'
+          }}>
+            Tambah Produk
+          </button>
+        </Link>
+      </div>
 
-      <Link to="/admin/create">
-        <button>Tambah Produk</button>
-      </Link>
-
-      <ul>
+      <div style={{ display: 'grid', gap: '1rem' }}>
         {Array.isArray(products) && products.map((product) => (
-          <li key={product.id}>
-            <strong>{product.name}</strong> - Rp{product.price}<br />
-            <small>{product.description}</small><br />
+          <div
+            key={product.id}
+            style={{
+              background: '#0f2c54',
+              padding: '1rem',
+              borderRadius: '10px',
+              color: 'white',
+              boxShadow: '0 4px 10px rgba(0,0,0,0.2)'
+            }}
+          >
+            <h3 style={{ marginBottom: '0.5rem' }}>{product.name}</h3>
+            <p style={{ marginBottom: '0.3rem' }}>Rp{product.price.toLocaleString('id-ID')}</p>
+            <p style={{ marginBottom: '1rem', fontSize: '0.9rem' }}>{product.description}</p>
 
-            <Link to={`/admin/edit/${product.id}`}>
-              <button>Edit</button>
-            </Link>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <Link to={`/admin/edit/${product.id}`}>
+                <button style={{
+                  backgroundColor: '#1a73e8',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.4rem 0.8rem',
+                  borderRadius: '6px',
+                  cursor: 'pointer'
+                }}>
+                  Edit
+                </button>
+              </Link>
 
-            <button onClick={() => handleDelete(product.id)}>Hapus</button>
-          </li>
+              <button
+                onClick={() => handleDelete(product.id)}
+                style={{
+                  backgroundColor: '#e63946',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.4rem 0.8rem',
+                  borderRadius: '6px',
+                  cursor: 'pointer'
+                }}
+              >
+                Hapus
+              </button>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

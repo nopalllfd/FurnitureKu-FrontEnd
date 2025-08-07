@@ -12,15 +12,12 @@ const AdminCreate = () => {
   });
 
   const [categories, setCategories] = useState([]);
-
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await api.get('/categories');
-        console.log('Kategori hasil API:', res.data); // 🐞 Debug
-        // Gunakan res.data.data jika perlu (misal response-nya ada di dalam `data`)
         const data = Array.isArray(res.data) ? res.data : res.data.data;
         setCategories(data);
       } catch (error) {
@@ -67,55 +64,92 @@ const AdminCreate = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Tambah Produk</h2>
+    <div
+      style={{
+        background: '#0f2c54',
+        padding: '2rem',
+        borderRadius: '12px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+        color: 'white',
+        maxWidth: '600px',
+        margin: '0 auto'
+      }}
+    >
+      <h2 style={{ marginBottom: '1.5rem', textAlign: 'center' }}>Tambah Produk</h2>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <input
+          name="name"
+          placeholder="Nama Produk"
+          value={form.name}
+          onChange={handleChange}
+          style={inputStyle}
+        />
 
-      <input
-        name="name"
-        placeholder="Nama Produk"
-        value={form.name}
-        onChange={handleChange}
-      />
+        <select
+          name="category_id"
+          value={form.category_id}
+          onChange={handleChange}
+          style={inputStyle}
+        >
+          <option value="">Pilih Kategori</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
 
-      <select
-        name="category_id"
-        value={form.category_id}
-        onChange={handleChange}
-      >
-        <option value="">Pilih Kategori</option>
-        {categories.map((cat) => (
-          <option key={cat.id} value={cat.id}>
-            {cat.name}
-          </option>
-        ))}
-      </select>
+        <input
+          name="price"
+          placeholder="Harga"
+          value={form.price}
+          onChange={handleChange}
+          type="number"
+          style={inputStyle}
+        />
 
-      <input
-        name="price"
-        placeholder="Harga"
-        value={form.price}
-        onChange={handleChange}
-        type="number"
-      />
+        <input
+          name="stock"
+          placeholder="Stok"
+          value={form.stock}
+          onChange={handleChange}
+          type="number"
+          style={inputStyle}
+        />
 
-      <input
-        name="stock"
-        placeholder="Stok"
-        value={form.stock}
-        onChange={handleChange}
-        type="number"
-      />
+        <textarea
+          name="description"
+          placeholder="Deskripsi"
+          value={form.description}
+          onChange={handleChange}
+          rows={4}
+          style={{ ...inputStyle, resize: 'vertical' }}
+        />
 
-      <textarea
-        name="description"
-        placeholder="Deskripsi"
-        value={form.description}
-        onChange={handleChange}
-      />
-
-      <button type="submit">Simpan</button>
-    </form>
+        <button
+          type="submit"
+          style={{
+            background: '#1a3b6d',
+            color: 'white',
+            padding: '0.75rem',
+            borderRadius: '8px',
+            border: 'none',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}
+        >
+          Simpan
+        </button>
+      </form>
+    </div>
   );
+};
+
+const inputStyle = {
+  padding: '0.75rem',
+  borderRadius: '8px',
+  border: '1px solid #ccc',
+  fontSize: '1rem'
 };
 
 export default AdminCreate;
