@@ -1,125 +1,184 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import apiClient from '../../services/api';
-import ProductCard from '../../components/user/ProductCard'; // Pastikan path ini benar
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { FaCouch, FaBed, FaChair, FaThLarge, FaCube, FaTruck, FaShieldAlt, FaUndoAlt } from 'react-icons/fa';
+
+const categoryIcons = [<FaCouch />, <FaBed />, <FaChair />, <FaThLarge />, <FaCube />];
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+
+  const reasons = [
+    { icon: <FaTruck />, label: 'Fast Delivery' },
+    { icon: <FaShieldAlt />, label: 'Secure Payment' },
+    { icon: <FaUndoAlt />, label: 'Easy Return' },
+  ];
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/api/categories');
+      setCategories(response.data.data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const fetchProducts = async (categoryId = null) => {
+    try {
+      let url = 'http://localhost:8000/api/products';
+      if (categoryId) {
+        url += `?category_id=${categoryId}`;
+      }
+      const response = await axios.get(url);
+      setProducts(response.data.data || []);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const response = await apiClient.get('/products?limit=8');
-        setProducts(response.data.data || response.data);
-      } catch (err) {
-        console.error('Gagal memuat produk:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    fetchCategories();
     fetchProducts();
   }, []);
 
+  const handleCategoryClick = (categoryId) => {
+    setSelectedCategoryId(categoryId);
+    fetchProducts(categoryId);
+  };
+
   return (
-    <div>
-      {/* 1. Hero Section - Menggunakan komponen Jumbotron Bootstrap */}
-      <div
-        className="container-fluid bg-dark text-white p-5 text-center"
-        style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2070')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        <h1 className="display-4 fw-bold">Desain Furnitur Modern & Elegan</h1>
-        <p className="lead my-3 col-md-8 mx-auto">Temukan koleksi terbaik untuk setiap sudut ruangan Anda, dirancang dengan kualitas dan estetika premium.</p>
-        <Link
-          to="/products"
-          className="btn btn-primary btn-lg mt-3"
-        >
-          Lihat Semua Koleksi
-        </Link>
+    <div style={{ backgroundColor: '#0D0D0D', color: 'white', minHeight: '100vh' }}>
+      {/* Hero Section */}
+      <div className="container py-5 d-flex flex-column flex-lg-row align-items-center justify-content-between">
+        <div className="mb-4 mb-lg-0">
+          <h1
+            className="fw-bold"
+            style={{ color: '#FFD700' }}
+          >
+            Discover Futuristic Furniture
+          </h1>
+          <p className="lead">Explore elegant furniture for modern living space.</p>
+          <div className="d-flex gap-3">
+            <button
+              className="btn"
+              style={{ backgroundColor: '#FFD700', color: '#0D0D0D' }}
+            >
+              Shop Now
+            </button>
+            <button className="btn btn-outline-light">See Collections</button>
+          </div>
+        </div>
+        <img
+          src="https://i.pinimg.com/originals/91/73/04/91730454aff9775bfacb0442c4ca4bb5.jpg"
+          alt="Hero"
+          className="img-fluid rounded shadow"
+          style={{ maxWidth: '400px' }}
+        />
       </div>
-      [Image of stylish modern furniture collection]
-      <div className="container my-5">
-        {/* 2. Produk Unggulan Section */}
-        <section className="text-center mb-5">
-          <h2 className="mb-4 fw-bold">Produk Unggulan</h2>
-          <p className="text-muted mb-5">Pilihan favorit pelanggan yang menggabungkan fungsi dan gaya.</p>
-          {loading ? (
-            <div className="d-flex justify-content-center">
+
+      {/* Categories */}
+      <div className="container py-4">
+        <h4
+          className="mb-3"
+          style={{ color: '#FFD700' }}
+        >
+          Categories
+        </h4>
+        <div className="row">
+          {categories.map((cat, i) => (
+            <div
+              key={cat.id}
+              className="col-6 col-sm-4 col-md-3 col-lg-2 mb-3"
+              onClick={() => handleCategoryClick(cat.id)}
+            >
               <div
-                className="spinner-border"
-                style={{ width: '3rem', height: '3rem' }}
-                role="status"
+                className={`text-center py-3 rounded shadow-sm ${selectedCategoryId === cat.id ? 'bg-warning text-dark' : ''}`}
+                style={{
+                  backgroundColor: selectedCategoryId === cat.id ? '#FFD700' : '#1a1a1a',
+                  color: selectedCategoryId === cat.id ? '#0D0D0D' : '#FFD700',
+                  cursor: 'pointer',
+                  transition: '0.3s',
+                }}
               >
-                <span className="visually-hidden">Loading...</span>
+                <div className="fs-4">{categoryIcons[i % categoryIcons.length]}</div>
+                <div>{cat.name}</div>
               </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Featured Products */}
+      <div className="container py-4">
+        <h4
+          className="mb-3"
+          style={{ color: '#FFD700' }}
+        >
+          Featured Products
+        </h4>
+        <div className="row">
+          {products.length === 0 ? (
+            <div className="col-12">
+              <p className="text-warning">No products found in this category.</p>
             </div>
           ) : (
-            <div className="row">
-              {products.map((product) => (
+            products.map((product, i) => (
+              <div
+                className="col-sm-6 col-md-4 col-lg-3 mb-4"
+                key={i}
+              >
                 <div
-                  key={product.id}
-                  className="col-lg-3 col-md-4 col-sm-6 mb-4"
+                  className="card h-100 shadow-sm"
+                  style={{ backgroundColor: '#1a1a1a', color: 'white' }}
                 >
-                  <ProductCard product={product} />
+                  <img
+                    src={`http://localhost:8000/storage/${product.image}`}
+                    className="card-img-top"
+                    alt={product.name}
+                    style={{ height: '180px', objectFit: 'cover' }}
+                  />
+                  <div className="card-body d-flex flex-column">
+                    <h5 className="card-title">{product.name}</h5>
+                    <p
+                      className="card-text"
+                      style={{ color: '#FFD700' }}
+                    >
+                      Rp {product.price.toLocaleString()}
+                    </p>
+                    <button className="btn btn-outline-warning mt-auto">Add to Cart</button>
+                  </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))
           )}
-        </section>
+        </div>
+      </div>
 
-        {/* 3. Kategori Section */}
-        <section className="text-center pt-5 bg-light rounded-3">
-          <div className="container">
-            <h2 className="mb-4 fw-bold">Jelajahi Kategori</h2>
-            <div className="row">
-              <div className="col-md-4 mb-4">
-                <Link
-                  to="/category/ruang-tamu"
-                  className="card h-100 shadow-sm text-decoration-none text-dark border-0"
-                >
-                  <div className="card-body p-4">
-                    <div className="mb-3">
-                      <i className="fas fa-couch fa-3x text-primary"></i>
-                    </div>
-                    <h5 className="card-title">Ruang Tamu</h5>
-                  </div>
-                </Link>
+      {/* Why Choose Us */}
+      <div className="container py-4">
+        <h4
+          className="mb-3"
+          style={{ color: '#FFD700' }}
+        >
+          Why Choose Us
+        </h4>
+        <div className="row text-center">
+          {reasons.map((reason, i) => (
+            <div
+              className="col-4"
+              key={i}
+            >
+              <div
+                className="fs-3"
+                style={{ color: '#FFD700' }}
+              >
+                {reason.icon}
               </div>
-              <div className="col-md-4 mb-4">
-                <Link
-                  to="/category/kamar-tidur"
-                  className="card h-100 shadow-sm text-decoration-none text-dark border-0"
-                >
-                  <div className="card-body p-4">
-                    <div className="mb-3">
-                      <i className="fas fa-bed fa-3x text-primary"></i>
-                    </div>
-                    <h5 className="card-title">Kamar Tidur</h5>
-                  </div>
-                </Link>
-              </div>
-              <div className="col-md-4 mb-4">
-                <Link
-                  to="/category/ruang-kerja"
-                  className="card h-100 shadow-sm text-decoration-none text-dark border-0"
-                >
-                  <div className="card-body p-4">
-                    <div className="mb-3">
-                      <i className="fas fa-briefcase fa-3x text-primary"></i>
-                    </div>
-                    <h5 className="card-title">Ruang Kerja</h5>
-                  </div>
-                </Link>
-              </div>
+              <p>{reason.label}</p>
             </div>
-          </div>
-        </section>
+          ))}
+        </div>
       </div>
     </div>
   );
